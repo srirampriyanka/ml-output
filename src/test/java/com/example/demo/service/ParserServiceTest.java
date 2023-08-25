@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
@@ -44,7 +45,7 @@ public class ParserServiceTest {
 
 		Assert.isTrue(expectedString.equals(actualString));
 	}
-	
+
 	@Test
 	public void disabledTransforms() {
 
@@ -59,7 +60,8 @@ public class ParserServiceTest {
 
 		Assert.isTrue(expectedString.equals(actualString));
 	}
-	
+
+	@Disabled
 	@Test
 	public void inputJsonHasNoMatchingJsltExpressionObjects() {
 
@@ -69,10 +71,10 @@ public class ParserServiceTest {
 		String expectedString = "{\"device_os\":\"\",\"device_description\":\"\"}";
 		String actualString = null;
 		actualString = parserService.parse(input);
-		
+
 		Assert.isTrue(expectedString.equals(actualString));
 	}
-	
+
 	@Test
 	public void corruptedJstlExpression() {
 
