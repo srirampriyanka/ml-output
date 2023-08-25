@@ -69,31 +69,32 @@ public class ParserService {
 			// for each transform, extract the data from inputJson using jsltExpression
 			// present inside Transform and append to the final string
 			for (Transforms transform : feature.getTransforms()) {
-				if (transform.isEnabled()) {
-					if (StringUtils.isBlank(transform.getName())) {
-						continue;
-					}
+				if (!transform.isEnabled()) {
+					continue;
+				}
+				if (StringUtils.isBlank(transform.getName())) {
+					continue;
+				}
 
-					if (addComma) {
-						stb.append(",");
-					}
-					stb.append("\"").append(transform.getName()).append("\":\"");
-					String jsltExpression = transform.getJsltExpression();
-					try {
-						Expression jslt = Parser.compileString(jsltExpression);
+				if (addComma) {
+					stb.append(",");
+				}
+				stb.append("\"").append(transform.getName()).append("\":\"");
+				String jsltExpression = transform.getJsltExpression();
+				try {
+					Expression jslt = Parser.compileString(jsltExpression);
 
-						JsonNode output = jslt.apply(inputJsonNode);
-						if (output.isNull()) {
-							stb.append("\"");
-						} else {
-							stb.append(output.asText()).append("\"");
-						}
-						addComma = true;
-					} catch (JsltException e) {
-						// ignoring any parser issues and putting value as ""
+					JsonNode output = jslt.apply(inputJsonNode);
+					if (output.isNull()) {
 						stb.append("\"");
-						addComma = true;
+					} else {
+						stb.append(output.asText()).append("\"");
 					}
+					addComma = true;
+				} catch (JsltException e) {
+					// ignoring any parser issues and putting value as ""
+					stb.append("\"");
+					addComma = true;
 				}
 			}
 		}
