@@ -13,6 +13,8 @@ import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.Parser;
 
+import io.micrometer.common.util.StringUtils;
+
 @Service
 public class ParserService {
 
@@ -49,7 +51,7 @@ public class ParserService {
 
 		boolean addComma = false;
 		// append event id if exists in the inputJson
-		if (inputJsonNode.get("eventId") != null) {
+		if (null != inputJsonNode.get("eventId") && inputJsonNode.get("eventId").isTextual()) {
 			stb.append("\"eventId\":").append(inputJsonNode.get("eventId"));
 			addComma = true;
 		}
@@ -59,6 +61,10 @@ public class ParserService {
 			// present inside Transform and append to the final string
 			for (Transforms transform : feature.getTransforms()) {
 				if (transform.isEnabled()) {
+					if(StringUtils.isBlank(transform.getName())) {
+						continue;
+					}
+					
 					if (addComma) {
 						stb.append(",");
 					}
