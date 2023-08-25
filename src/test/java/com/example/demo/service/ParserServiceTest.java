@@ -40,11 +40,7 @@ public class ParserServiceTest {
 
 		String expectedString = "{\"eventId\":\"878237843\",\"device_os\":\"Linux\",\"device_description\":\"Linux Laptop\"}";
 		String actualString = null;
-		try {
-			actualString = parserService.parse(input);
-		} catch (Exception e) {
-			System.out.println("exception occured");
-		}
+		actualString = parserService.parse(input);
 
 		Assert.isTrue(expectedString.equals(actualString));
 	}
@@ -59,12 +55,21 @@ public class ParserServiceTest {
 
 		String expectedString = "{\"eventId\":\"878237843\",\"device_description\":\"Linux Laptop\"}";
 		String actualString = null;
-		try {
-			actualString = parserService.parse(input);
-		} catch (Exception e) {
-			System.out.println("exception occured");
-		}
+		actualString = parserService.parse(input);
 
+		Assert.isTrue(expectedString.equals(actualString));
+	}
+	
+	@Test
+	public void inputJsonHasNoMatchingJsltExpressionObjects() {
+
+		String inputJson = "{ \"ip\" : \"10.45.2.30\",\"sessionId\": \"ads79uoijd098098\" }";
+		Input input = getOrOverrideDefaultInput(DEFAULT_TRANSFORMS_LIST, DEFAULT_FEATURE, inputJson, true);
+
+		String expectedString = "{\"device_os\":\"\",\"device_description\":\"\"}";
+		String actualString = null;
+		actualString = parserService.parse(input);
+		
 		Assert.isTrue(expectedString.equals(actualString));
 	}
 	
@@ -76,13 +81,8 @@ public class ParserServiceTest {
 		t.add(new Transforms("device_description", true, true, ".device.osType + \" \" + .device.model"));
 		Input input = getOrOverrideDefaultInput(t, DEFAULT_FEATURE, DEFAULT_INPUTJSON, true);
 
-		String expectedString = "{\"eventId\":\"878237843\",\"device_os\":\"null\",\"device_description\":\"Linux Laptop\"}";
-		String actualString = null;
-		try {
-			actualString = parserService.parse(input);
-		} catch (Exception e) {
-			System.out.println("exception occured");
-		}
+		String expectedString = "{\"eventId\":\"878237843\",\"device_os\":\"\",\"device_description\":\"Linux Laptop\"}";
+		String actualString = parserService.parse(input);
 
 		Assert.isTrue(expectedString.equals(actualString));
 	}

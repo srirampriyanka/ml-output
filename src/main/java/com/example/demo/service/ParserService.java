@@ -66,13 +66,15 @@ public class ParserService {
 					String jsltExpression = transform.getJsltExpression();
 					try {
 						Expression jslt = Parser.compileString(jsltExpression);
-	
-						// considering jslt expression variables as empty, since i don't have anything
-						// defined as limitation
+
 						JsonNode output = jslt.apply(inputJsonNode);
-						stb.append(output.asText()).append("\"");
+						if (output.isNull()) {
+							stb.append("\"");
+						} else {
+							stb.append(output.asText()).append("\"");
+						}
 						addComma = true;
-					} catch(JsltException e) {
+					} catch (JsltException e) {
 						// ignoring any parser issues and putting value as ""
 						stb.append("\"");
 						addComma = true;
