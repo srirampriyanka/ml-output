@@ -20,17 +20,15 @@ public class ParserContrller {
 	 * 
 	 * <P>
 	 * Errors
+	 * <P>
+	 * <li>{ "statusCode": 400, "message": "Input Json Field is Corrupted, please
+	 * check the json syntax", "timestamp": 1692980639077 }</li>
+	 * <li>{ "statusCode": 400, "message": "Feature Field is empty, nothing to
+	 * parse", "timestamp": 1692980720122 }</li>
 	 * 
-	 * @return - empty "{}" json body if it was unable to parse the
-	 *         feature/inputjson into any valid output json {"error":"Feature Field
-	 *         is empty, nothing to parse"} - if Feature object is empty
-	 *         {"error":"InputJson Field is empty, nothing to parse"} - if Input
-	 *         object is empty {"error":"InputJson Field is Corrupted, please check
-	 *         the json syntax"} - if Input Json is corrupted - {"error":"Input is
-	 *         empty, nothing to parse"} - If Input is empty
+	 * <P>
+	 * Sample Successful Output
 	 * 
-	 *         <P>
-	 *         Sample Successful Output
 	 * @return Input FeatureConfig Object { "id": 1, "name": "DeviceFeatures"
 	 *         "transforms": [ { "name": "device_os", "useInML" : true, "enabled" :
 	 *         true, "jsltExpression": ".device.osType" }, { "name":
