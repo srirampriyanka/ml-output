@@ -167,7 +167,7 @@ public class ParserServiceTest {
 		Assert.isTrue(expectedString.equals(actualString));
 	}
 
-	public Input getOrOverrideDefaultInput(List<Transforms> inputTransforms, Feature inputFeature, String inputJson,
+	private Input getOrOverrideDefaultInput(List<Transforms> inputTransforms, Feature inputFeature, String inputJson,
 			boolean overrideDefaults) {
 
 		List<Transforms> transforms;
