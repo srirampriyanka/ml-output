@@ -73,7 +73,7 @@ public class ParserService {
 						stb.append(output.asText()).append("\"");
 						addComma = true;
 					} catch(JsltException e) {
-						// ignoring any parser issues and putitng value as ""
+						// ignoring any parser issues and putting value as ""
 						stb.append("\"");
 						addComma = true;
 					}

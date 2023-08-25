@@ -48,6 +48,44 @@ public class ParserServiceTest {
 
 		Assert.isTrue(expectedString.equals(actualString));
 	}
+	
+	@Test
+	public void disabledTransforms() {
+
+		List<Transforms> t = new ArrayList<Transforms>();
+		t.add(new Transforms("device_os", false, true, ".device.osType"));
+		t.add(new Transforms("device_description", true, true, ".device.osType + \" \" + .device.model"));
+		Input input = getOrOverrideDefaultInput(t, DEFAULT_FEATURE, DEFAULT_INPUTJSON, true);
+
+		String expectedString = "{\"eventId\":\"878237843\",\"device_description\":\"Linux Laptop\"}";
+		String actualString = null;
+		try {
+			actualString = parserService.parse(input);
+		} catch (Exception e) {
+			System.out.println("exception occured");
+		}
+
+		Assert.isTrue(expectedString.equals(actualString));
+	}
+	
+	@Test
+	public void corruptedJstlExpression() {
+
+		List<Transforms> t = new ArrayList<Transforms>();
+		t.add(new Transforms("device_os", true, true, ".dev"));
+		t.add(new Transforms("device_description", true, true, ".device.osType + \" \" + .device.model"));
+		Input input = getOrOverrideDefaultInput(t, DEFAULT_FEATURE, DEFAULT_INPUTJSON, true);
+
+		String expectedString = "{\"eventId\":\"878237843\",\"device_os\":\"null\",\"device_description\":\"Linux Laptop\"}";
+		String actualString = null;
+		try {
+			actualString = parserService.parse(input);
+		} catch (Exception e) {
+			System.out.println("exception occured");
+		}
+
+		Assert.isTrue(expectedString.equals(actualString));
+	}
 
 	@Test
 	public void nullInput() {
