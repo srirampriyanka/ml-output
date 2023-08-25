@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.Expression;
+import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.Parser;
 
 @Service
@@ -63,13 +64,19 @@ public class ParserService {
 					}
 					stb.append("\"").append(transform.getName()).append("\":\"");
 					String jsltExpression = transform.getJsltExpression();
-					Expression jslt = Parser.compileString(jsltExpression);
-
-					// considering jslt expression variables as empty, since i don't have anything
-					// defined as limitation
-					JsonNode output = jslt.apply(inputJsonNode);
-					stb.append(output.asText()).append("\"");
-					addComma = true;
+					try {
+						Expression jslt = Parser.compileString(jsltExpression);
+	
+						// considering jslt expression variables as empty, since i don't have anything
+						// defined as limitation
+						JsonNode output = jslt.apply(inputJsonNode);
+						stb.append(output.asText()).append("\"");
+						addComma = true;
+					} catch(JsltException e) {
+						// ignoring any parser issues and putitng value as ""
+						stb.append("\"");
+						addComma = true;
+					}
 				}
 			}
 		}
