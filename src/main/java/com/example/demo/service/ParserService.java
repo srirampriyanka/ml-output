@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exceptionhandling.CorruptedJsonException;
+import com.example.demo.exceptionhandling.IncorrectInputException;
 import com.example.demo.model.Feature;
 import com.example.demo.model.Input;
 import com.example.demo.model.Transforms;
@@ -20,22 +22,25 @@ public class ParserService {
 
 	public static String FEATURE_ERROR = "Feature Field is empty, nothing to parse";
 	public static String INPUT_JSON_ERROR = "InputJson Field is empty, nothing to parse";
-	public static String INPUT_JSON_CORRUPTED = "InputJson Field is Corrupted, please check the json syntax";
+	public static String INPUT_JSON_CORRUPTED = "Input Json Field is Corrupted, please check the json syntax";
 	public static String INPUT_ERROR = "Input is empty, nothing to parse";
 
 	public String parse(Input input) {
 		if (null == input) {
-			return "{\"error\":\"" + INPUT_ERROR + "\"}";
+			throw new IncorrectInputException(INPUT_ERROR);
+			// return "{\"error\":\"" + INPUT_ERROR + "\"}";
 		}
 
 		Feature feature = input.getFeature();
 		if (null == feature) {
-			return "{\"error\":\"" + FEATURE_ERROR + "\"}";
+			throw new IncorrectInputException(FEATURE_ERROR);
+			// return "{\"error\":\"" + FEATURE_ERROR + "\"}";
 		}
 
 		String inputJson = input.getJson();
 		if (null == inputJson || inputJson.length() == 0) {
-			return "{\"error\":\"" + INPUT_JSON_ERROR + "\"}";
+			throw new IncorrectInputException(INPUT_JSON_ERROR);
+			// return "{\"error\":\"" + INPUT_JSON_ERROR + "\"}";
 		}
 		// convert input String to JsonNode
 		JsonNode inputJsonNode;
@@ -43,7 +48,8 @@ public class ParserService {
 			inputJsonNode = convertToJsonNode(inputJson);
 		} catch (JsonProcessingException e) {
 			// instead of empty string, we can return an error
-			return "{\"error\":\"" + INPUT_JSON_CORRUPTED + "\"}";
+			// return "{\"error\":\"" + INPUT_JSON_CORRUPTED + "\"}";
+			throw new CorruptedJsonException(INPUT_JSON_CORRUPTED);
 		}
 
 		StringBuilder stb = new StringBuilder();
@@ -56,15 +62,18 @@ public class ParserService {
 			addComma = true;
 		}
 
+		// the below condition can be tied to eventId. If eventId is empty we can skip
+		// showing transforms altogether.
+		// currently assuming we have to show transforms irrespective of eventId
 		if (null != feature.getTransforms()) {
 			// for each transform, extract the data from inputJson using jsltExpression
 			// present inside Transform and append to the final string
 			for (Transforms transform : feature.getTransforms()) {
 				if (transform.isEnabled()) {
-					if(StringUtils.isBlank(transform.getName())) {
+					if (StringUtils.isBlank(transform.getName())) {
 						continue;
 					}
-					
+
 					if (addComma) {
 						stb.append(",");
 					}

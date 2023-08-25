@@ -3,11 +3,14 @@ package com.example.demo.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
+import com.example.demo.exceptionhandling.CorruptedJsonException;
+import com.example.demo.exceptionhandling.IncorrectInputException;
 import com.example.demo.model.Feature;
 import com.example.demo.model.Input;
 import com.example.demo.model.Transforms;
@@ -88,7 +91,7 @@ public class ParserServiceTest {
 
 		Assert.isTrue(expectedString.equals(actualString));
 	}
-	
+
 	@Test
 	public void incorrectTransformName() {
 
@@ -105,20 +108,17 @@ public class ParserServiceTest {
 
 	@Test
 	public void nullInput() {
-		String expectedString = "{\"error\":\"" + ParserService.INPUT_ERROR + "\"}";
-		;
-		String actualString = parserService.parse(null);
-
-		Assert.isTrue(expectedString.equals(actualString));
+		IncorrectInputException thrown = Assertions.assertThrows(IncorrectInputException.class, () -> {
+			parserService.parse(null);
+		}, parserService.INPUT_ERROR);
 	}
 
 	@Test
 	public void emptyFeature() {
 		Input input = getOrOverrideDefaultInput(DEFAULT_TRANSFORMS_LIST, null, DEFAULT_INPUTJSON, true);
-		String expectedString = "{\"error\":\"" + ParserService.FEATURE_ERROR + "\"}";
-		String actualString = parserService.parse(input);
-
-		Assert.isTrue(expectedString.equals(actualString));
+		IncorrectInputException thrown = Assertions.assertThrows(IncorrectInputException.class, () -> {
+			parserService.parse(input);
+		}, parserService.FEATURE_ERROR);
 	}
 
 	@Test
@@ -133,19 +133,17 @@ public class ParserServiceTest {
 	@Test
 	public void emptyInputJson() {
 		Input input = getOrOverrideDefaultInput(DEFAULT_TRANSFORMS_LIST, DEFAULT_FEATURE, null, true);
-		String expectedString = "{\"error\":\"" + ParserService.INPUT_JSON_ERROR + "\"}";
-		String actualString = parserService.parse(input);
-
-		Assert.isTrue(expectedString.equals(actualString));
+		IncorrectInputException thrown = Assertions.assertThrows(IncorrectInputException.class, () -> {
+			parserService.parse(input);
+		}, parserService.INPUT_JSON_ERROR);
 	}
 
 	@Test
 	public void emptyTransformsAndEventId() {
 		Input input = getOrOverrideDefaultInput(null, DEFAULT_FEATURE, null, true);
-		String expectedString = "{\"error\":\"" + ParserService.INPUT_JSON_ERROR + "\"}";
-		String actualString = parserService.parse(input);
-
-		Assert.isTrue(expectedString.equals(actualString));
+		IncorrectInputException thrown = Assertions.assertThrows(IncorrectInputException.class, () -> {
+			parserService.parse(input);
+		}, parserService.INPUT_JSON_ERROR);
 	}
 
 	@Test
@@ -173,12 +171,10 @@ public class ParserServiceTest {
 	@Test
 	public void corruptInputJson() {
 		String json = "{\"";
-
 		Input input = getOrOverrideDefaultInput(DEFAULT_TRANSFORMS_LIST, DEFAULT_FEATURE, json, true);
-		String expectedString = "{\"error\":\"" + ParserService.INPUT_JSON_CORRUPTED + "\"}";
-		String actualString = parserService.parse(input);
-
-		Assert.isTrue(expectedString.equals(actualString));
+		CorruptedJsonException thrown = Assertions.assertThrows(CorruptedJsonException.class, () -> {
+			parserService.parse(input);
+		}, parserService.INPUT_JSON_CORRUPTED);
 	}
 
 	private Input getOrOverrideDefaultInput(List<Transforms> inputTransforms, Feature inputFeature, String inputJson,
